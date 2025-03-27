@@ -1,0 +1,15 @@
+int x = 10;
+real y = 5/2;
+// print("Teste \"escapado\"!\n");
+// print("Esta string vai dar erro
+//       porque há uma quebra de linha direta."
+// );
+// print("Esta string vai dar erro ""porque há aspas duplas não escapadas");
+print("Teste \n");
+char c = 'a';
+// comentario de uma linha
+/*
+comentario de
+multiplas
+linhas
+*/

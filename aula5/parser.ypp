@@ -1,0 +1,17 @@
+%{
+    int yylex();
+%}
+
+%token TOKEN_ID
+
+%%
+
+program: TOKEN_ID
+    ;
+
+%%
+
+void yyerror(){
+    fprintf(stderr, "Erro de sintaxe\n");
+    exit(3);
+}
