@@ -1,0 +1,5 @@
+*.o
+lex.yy.*
+a.out
+etapa1
+etapa2

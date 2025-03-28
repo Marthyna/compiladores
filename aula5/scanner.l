@@ -7,6 +7,7 @@
 // TODO: adicionar função para inverter numeros
 
 #include "tokens.h"
+#include "parser.tab.hpp"
 #include "symbols.hpp"
 
 #define MAX_STRING_SIZE 1024

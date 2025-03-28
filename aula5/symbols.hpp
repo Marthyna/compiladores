@@ -7,15 +7,6 @@
 
 using namespace std;
 
-enum SymbolType
-{
-    SYMBOL_TK_IDENTIFIER,
-    SYMBOL_LIT_INT,
-    SYMBOL_LIT_CHAR,
-    SYMBOL_LIT_REAL,
-    SYMBOL_LIT_STRING,
-};
-
 struct SYMBOL
 {
     int type;

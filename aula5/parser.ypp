@@ -1,17 +1,39 @@
 %{
+    #include <stdio.h>
+    #include <string>
+    using namespace std;
     int yylex();
+    void yyerror(string msg);
 %}
 
 %token TOKEN_ID
+%token KEY_INT
+%token KEY_IF
+%token KEY_FOR
+%token LIT_ZEROS
 
 %%
 
-program: TOKEN_ID
+program: ldef 
     ;
 
+ldef: def ';' ldef
+      | 
+      ;
+
+def: KEY_IF TOKEN_ID '=' LIT_ZEROS
+    | KEY_IF expr def
+    |
+    ;
+
+expr: TOKEN_ID
+      | LIT_ZEROS
+      | expr '+' expr
+      ;
+
 %%
 
-void yyerror(){
+void yyerror(string msg){
     fprintf(stderr, "Erro de sintaxe\n");
-    exit(3);
+    exit(3); // indispensavel
 }

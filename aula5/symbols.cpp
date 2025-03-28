@@ -9,13 +9,6 @@
 
 using namespace std;
 
-string SymbolName[]{
-    "SYMBOL_TK_IDENTIFIER",
-    "SYMBOL_LIT_INT",
-    "SYMBOL_LIT_CHAR",
-    "SYMBOL_LIT_REAL",
-    "SYMBOL_LIT_STRING"};
-
 map<string, SYMBOL *> SymbolTable;
 
 SYMBOL *symbolInsert(int type, char *text)
@@ -33,7 +26,7 @@ void symbolPrintTable(void)
 {
     for (auto s : SymbolTable)
     {
-        printf("Symbol:[%s,%s]\n", SymbolName[s.second->type].c_str(), s.second->text.c_str());
+        printf("Symbol:[%d,%s]\n", s.second->type, s.second->text.c_str());
     }
 }
 

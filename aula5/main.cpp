@@ -9,6 +9,7 @@ extern FILE *yyin;
 extern int running;
 extern int lineNumber;
 int yylex();
+int yyparse();
 void symbolPrintTable();
 
 int main(int argc, char **argv)
@@ -26,14 +27,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    while (running)
-    {
-        int tok = yylex();
-        if (!running)
-            break;
-
-        printf("TOKEN: %d\n", tok);
-    }
+    yyparse();
 
     printf("\n--- Tabela de Símbolos ---\n");
     symbolPrintTable();
