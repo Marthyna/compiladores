@@ -19,7 +19,7 @@ public:
 SYMBOL *symbolInsert(int type, char *text);
 void symbolPrintTable();
 
-int getLineNumber();
+int getLineNumber(void);
 int isRunning(void);
 
 // END OF FILE

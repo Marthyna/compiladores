@@ -14,15 +14,29 @@
 
 %%
 
-program: ldef 
+program: ldecl
     ;
 
-ldef: def ';' ldef
-      | 
-      ;
+ldecl: dec ';' ldecl
+    |
+    ;
 
-def: KEY_IF TOKEN_ID '=' LIT_ZEROS
-    | KEY_IF expr def
+dec: vardec
+    | fdec
+    ;
+
+vardec: KEY_INT TOKEN_ID '=' LIT_ZEROS
+    ;
+
+fdec: KEY_INT TOKEN_ID '(' ')' cmdl
+    ;
+
+cmdl: cmd cmdl
+    |
+    ;
+
+cmd: TOKEN_ID '=' expr
+    | KEY_IF expr cmd
     |
     ;
 
