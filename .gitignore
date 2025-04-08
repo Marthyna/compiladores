@@ -1,8 +1,6 @@
 *.o
 lex.yy.*
 a.out
-etapa1
-etapa2
 *.tgz
 *.code-workspace
 *.json

@@ -1,0 +1,1860 @@
+Terminais sem uso na gramática
+
+    OPERATOR_LE
+    OPERATOR_GE
+    OPERATOR_EQ
+    OPERATOR_DIF
+
+
+Estado 54 conflitos: 1 de deslocamento/redução
+Estado 122 conflitos: 1 de deslocamento/redução
+
+
+Gramática
+
+    0 $accept: program $end
+
+    1 program: ldecl
+
+    2 ldecl: dec ldecl
+    3      | dec
+
+    4 dec: vardec
+    5    | fundec
+    6    | vectordec
+
+    7 vardec: typedec TK_IDENTIFIER '=' literal ';'
+
+    8 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' ';'
+    9          | typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';'
+
+   10 seqiterals: literal ',' seqiterals
+   11           | literal
+
+   12 typedec: KW_INT
+   13        | KW_BYTE
+   14        | KW_REAL
+
+   15 literal: LIT_INT
+   16        | LIT_CHAR
+   17        | LIT_REAL
+
+   18 cmdl: cmd cmdl
+   19     | cmd
+
+   20 cmd: attrib ';'
+   21    | flowctrl
+   22    | printcmd ';'
+   23    | readcmd ';'
+   24    | returncmd ';'
+   25    | cmdblock
+   26    | ';'
+
+   27 readcmd: KW_READ TK_IDENTIFIER
+
+   28 printcmd: KW_PRINT printelems
+
+   29 returncmd: KW_RETURN expr
+
+   30 printelems: printelem
+   31           | printelem printelems
+
+   32 printelem: LIT_STRING
+   33          | expr
+
+   34 fundec: typedec TK_IDENTIFIER '(' params ')' cmd
+
+   35 params: param ',' params
+   36       | param
+   37       | ε
+
+   38 param: typedec TK_IDENTIFIER
+
+   39 cmdblock: '{' cmdl '}'
+   40         | '{' '}'
+
+   41 attrib: TK_IDENTIFIER '=' expr
+   42       | TK_IDENTIFIER '[' expr ']' '=' expr
+
+   43 expr: TK_IDENTIFIER
+   44     | TK_IDENTIFIER '[' LIT_INT ']'
+   45     | LIT_INT
+   46     | LIT_REAL
+   47     | LIT_CHAR
+   48     | expr '+' expr
+   49     | expr '-' expr
+   50     | expr '*' expr
+   51     | expr '/' expr
+   52     | comparisonexpr
+   53     | expr '&' expr
+   54     | expr '|' expr
+   55     | '~' expr
+   56     | '(' expr ')'
+   57     | funcall
+
+   58 comparisonexpr: expr '<' expr
+   59               | expr '>' expr
+   60               | expr '=' expr
+
+   61 funcall: TK_IDENTIFIER '(' args ')'
+
+   62 args: expr ',' args
+   63     | expr
+   64     | ε
+
+   65 flowctrl: KW_IF '(' expr ')' cmd
+   66         | KW_IF '(' expr ')' cmd KW_ELSE cmd
+   67         | KW_WHILE expr KW_DO cmd
+   68         | KW_DO cmd KW_WHILE expr ';'
+
+
+Terminais, com as regras onde eles aparecem
+
+    $end (0) 0
+    '&' (38) 53
+    '(' (40) 34 56 61 65 66
+    ')' (41) 34 56 61 65 66
+    '*' (42) 50
+    '+' (43) 48
+    ',' (44) 10 35 62
+    '-' (45) 49
+    '/' (47) 51
+    ';' (59) 7 8 9 20 22 23 24 26 68
+    '<' (60) 58
+    '=' (61) 7 9 41 42 60
+    '>' (62) 59
+    '[' (91) 8 9 42 44
+    ']' (93) 8 9 42 44
+    '{' (123) 39 40
+    '|' (124) 54
+    '}' (125) 39 40
+    '~' (126) 55
+    error (256)
+    TK_IDENTIFIER (258) 7 8 9 27 34 38 41 42 43 44 61
+    LIT_INT (259) 8 9 15 44 45
+    LIT_REAL (260) 17 46
+    LIT_CHAR (261) 16 47
+    LIT_STRING (262) 32
+    KW_INT (263) 12
+    KW_BYTE (264) 13
+    KW_REAL (265) 14
+    KW_READ (266) 27
+    KW_PRINT (267) 28
+    KW_RETURN (268) 29
+    KW_IF (269) 65 66
+    KW_ELSE (270) 66
+    KW_WHILE (271) 67 68
+    KW_DO (272) 67 68
+    OPERATOR_LE (273)
+    OPERATOR_GE (274)
+    OPERATOR_EQ (275)
+    OPERATOR_DIF (276)
+
+
+Não terminais com as regras onde eles aparecem
+
+    $accept (40)
+        à esquerda: 0
+    program (41)
+        à esquerda: 1
+        à direita: 0
+    ldecl (42)
+        à esquerda: 2 3
+        à direita: 1 2
+    dec (43)
+        à esquerda: 4 5 6
+        à direita: 2 3
+    vardec (44)
+        à esquerda: 7
+        à direita: 4
+    vectordec (45)
+        à esquerda: 8 9
+        à direita: 6
+    seqiterals (46)
+        à esquerda: 10 11
+        à direita: 9 10
+    typedec (47)
+        à esquerda: 12 13 14
+        à direita: 7 8 9 34 38
+    literal (48)
+        à esquerda: 15 16 17
+        à direita: 7 10 11
+    cmdl (49)
+        à esquerda: 18 19
+        à direita: 18 39
+    cmd (50)
+        à esquerda: 20 21 22 23 24 25 26
+        à direita: 18 19 34 65 66 67 68
+    readcmd (51)
+        à esquerda: 27
+        à direita: 23
+    printcmd (52)
+        à esquerda: 28
+        à direita: 22
+    returncmd (53)
+        à esquerda: 29
+        à direita: 24
+    printelems (54)
+        à esquerda: 30 31
+        à direita: 28 31
+    printelem (55)
+        à esquerda: 32 33
+        à direita: 30 31
+    fundec (56)
+        à esquerda: 34
+        à direita: 5
+    params (57)
+        à esquerda: 35 36 37
+        à direita: 34 35
+    param (58)
+        à esquerda: 38
+        à direita: 35 36
+    cmdblock (59)
+        à esquerda: 39 40
+        à direita: 25
+    attrib (60)
+        à esquerda: 41 42
+        à direita: 20
+    expr (61)
+        à esquerda: 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57
+        à direita: 29 33 41 42 48 49 50 51 53 54 55 56 58 59 60 62 63 65 66 67 68
+    comparisonexpr (62)
+        à esquerda: 58 59 60
+        à direita: 52
+    funcall (63)
+        à esquerda: 61
+        à direita: 57
+    args (64)
+        à esquerda: 62 63 64
+        à direita: 61 62
+    flowctrl (65)
+        à esquerda: 65 66 67 68
+        à direita: 21
+
+
+Estado 0
+
+    0 $accept: • program $end
+
+    KW_INT   deslocar, e ir ao estado 1
+    KW_BYTE  deslocar, e ir ao estado 2
+    KW_REAL  deslocar, e ir ao estado 3
+
+    program    ir ao estado 4
+    ldecl      ir ao estado 5
+    dec        ir ao estado 6
+    vardec     ir ao estado 7
+    vectordec  ir ao estado 8
+    typedec    ir ao estado 9
+    fundec     ir ao estado 10
+
+
+Estado 1
+
+   12 typedec: KW_INT •
+
+    $padrão  reduzir usando a regra 12 (typedec)
+
+
+Estado 2
+
+   13 typedec: KW_BYTE •
+
+    $padrão  reduzir usando a regra 13 (typedec)
+
+
+Estado 3
+
+   14 typedec: KW_REAL •
+
+    $padrão  reduzir usando a regra 14 (typedec)
+
+
+Estado 4
+
+    0 $accept: program • $end
+
+    $end  deslocar, e ir ao estado 11
+
+
+Estado 5
+
+    1 program: ldecl •
+
+    $padrão  reduzir usando a regra 1 (program)
+
+
+Estado 6
+
+    2 ldecl: dec • ldecl
+    3      | dec •
+
+    KW_INT   deslocar, e ir ao estado 1
+    KW_BYTE  deslocar, e ir ao estado 2
+    KW_REAL  deslocar, e ir ao estado 3
+
+    $padrão  reduzir usando a regra 3 (ldecl)
+
+    ldecl      ir ao estado 12
+    dec        ir ao estado 6
+    vardec     ir ao estado 7
+    vectordec  ir ao estado 8
+    typedec    ir ao estado 9
+    fundec     ir ao estado 10
+
+
+Estado 7
+
+    4 dec: vardec •
+
+    $padrão  reduzir usando a regra 4 (dec)
+
+
+Estado 8
+
+    6 dec: vectordec •
+
+    $padrão  reduzir usando a regra 6 (dec)
+
+
+Estado 9
+
+    7 vardec: typedec • TK_IDENTIFIER '=' literal ';'
+    8 vectordec: typedec • TK_IDENTIFIER '[' LIT_INT ']' ';'
+    9          | typedec • TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';'
+   34 fundec: typedec • TK_IDENTIFIER '(' params ')' cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 13
+
+
+Estado 10
+
+    5 dec: fundec •
+
+    $padrão  reduzir usando a regra 5 (dec)
+
+
+Estado 11
+
+    0 $accept: program $end •
+
+    $padrão  aceitar
+
+
+Estado 12
+
+    2 ldecl: dec ldecl •
+
+    $padrão  reduzir usando a regra 2 (ldecl)
+
+
+Estado 13
+
+    7 vardec: typedec TK_IDENTIFIER • '=' literal ';'
+    8 vectordec: typedec TK_IDENTIFIER • '[' LIT_INT ']' ';'
+    9          | typedec TK_IDENTIFIER • '[' LIT_INT ']' '=' seqiterals ';'
+   34 fundec: typedec TK_IDENTIFIER • '(' params ')' cmd
+
+    '='  deslocar, e ir ao estado 14
+    '['  deslocar, e ir ao estado 15
+    '('  deslocar, e ir ao estado 16
+
+
+Estado 14
+
+    7 vardec: typedec TK_IDENTIFIER '=' • literal ';'
+
+    LIT_INT   deslocar, e ir ao estado 17
+    LIT_REAL  deslocar, e ir ao estado 18
+    LIT_CHAR  deslocar, e ir ao estado 19
+
+    literal  ir ao estado 20
+
+
+Estado 15
+
+    8 vectordec: typedec TK_IDENTIFIER '[' • LIT_INT ']' ';'
+    9          | typedec TK_IDENTIFIER '[' • LIT_INT ']' '=' seqiterals ';'
+
+    LIT_INT  deslocar, e ir ao estado 21
+
+
+Estado 16
+
+   34 fundec: typedec TK_IDENTIFIER '(' • params ')' cmd
+
+    KW_INT   deslocar, e ir ao estado 1
+    KW_BYTE  deslocar, e ir ao estado 2
+    KW_REAL  deslocar, e ir ao estado 3
+
+    $padrão  reduzir usando a regra 37 (params)
+
+    typedec  ir ao estado 22
+    params   ir ao estado 23
+    param    ir ao estado 24
+
+
+Estado 17
+
+   15 literal: LIT_INT •
+
+    $padrão  reduzir usando a regra 15 (literal)
+
+
+Estado 18
+
+   17 literal: LIT_REAL •
+
+    $padrão  reduzir usando a regra 17 (literal)
+
+
+Estado 19
+
+   16 literal: LIT_CHAR •
+
+    $padrão  reduzir usando a regra 16 (literal)
+
+
+Estado 20
+
+    7 vardec: typedec TK_IDENTIFIER '=' literal • ';'
+
+    ';'  deslocar, e ir ao estado 25
+
+
+Estado 21
+
+    8 vectordec: typedec TK_IDENTIFIER '[' LIT_INT • ']' ';'
+    9          | typedec TK_IDENTIFIER '[' LIT_INT • ']' '=' seqiterals ';'
+
+    ']'  deslocar, e ir ao estado 26
+
+
+Estado 22
+
+   38 param: typedec • TK_IDENTIFIER
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 27
+
+
+Estado 23
+
+   34 fundec: typedec TK_IDENTIFIER '(' params • ')' cmd
+
+    ')'  deslocar, e ir ao estado 28
+
+
+Estado 24
+
+   35 params: param • ',' params
+   36       | param •
+
+    ','  deslocar, e ir ao estado 29
+
+    $padrão  reduzir usando a regra 36 (params)
+
+
+Estado 25
+
+    7 vardec: typedec TK_IDENTIFIER '=' literal ';' •
+
+    $padrão  reduzir usando a regra 7 (vardec)
+
+
+Estado 26
+
+    8 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' • ';'
+    9          | typedec TK_IDENTIFIER '[' LIT_INT ']' • '=' seqiterals ';'
+
+    '='  deslocar, e ir ao estado 30
+    ';'  deslocar, e ir ao estado 31
+
+
+Estado 27
+
+   38 param: typedec TK_IDENTIFIER •
+
+    $padrão  reduzir usando a regra 38 (param)
+
+
+Estado 28
+
+   34 fundec: typedec TK_IDENTIFIER '(' params ')' • cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    cmd        ir ao estado 41
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 29
+
+   35 params: param ',' • params
+
+    KW_INT   deslocar, e ir ao estado 1
+    KW_BYTE  deslocar, e ir ao estado 2
+    KW_REAL  deslocar, e ir ao estado 3
+
+    $padrão  reduzir usando a regra 37 (params)
+
+    typedec  ir ao estado 22
+    params   ir ao estado 48
+    param    ir ao estado 24
+
+
+Estado 30
+
+    9 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' '=' • seqiterals ';'
+
+    LIT_INT   deslocar, e ir ao estado 17
+    LIT_REAL  deslocar, e ir ao estado 18
+    LIT_CHAR  deslocar, e ir ao estado 19
+
+    seqiterals  ir ao estado 49
+    literal     ir ao estado 50
+
+
+Estado 31
+
+    8 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' ';' •
+
+    $padrão  reduzir usando a regra 8 (vectordec)
+
+
+Estado 32
+
+   41 attrib: TK_IDENTIFIER • '=' expr
+   42       | TK_IDENTIFIER • '[' expr ']' '=' expr
+
+    '='  deslocar, e ir ao estado 51
+    '['  deslocar, e ir ao estado 52
+
+
+Estado 33
+
+   27 readcmd: KW_READ • TK_IDENTIFIER
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 53
+
+
+Estado 34
+
+   28 printcmd: KW_PRINT • printelems
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    LIT_STRING     deslocar, e ir ao estado 58
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    printelems      ir ao estado 61
+    printelem       ir ao estado 62
+    expr            ir ao estado 63
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 35
+
+   29 returncmd: KW_RETURN • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 66
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 36
+
+   65 flowctrl: KW_IF • '(' expr ')' cmd
+   66         | KW_IF • '(' expr ')' cmd KW_ELSE cmd
+
+    '('  deslocar, e ir ao estado 67
+
+
+Estado 37
+
+   67 flowctrl: KW_WHILE • expr KW_DO cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 68
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 38
+
+   68 flowctrl: KW_DO • cmd KW_WHILE expr ';'
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    cmd        ir ao estado 69
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 39
+
+   26 cmd: ';' •
+
+    $padrão  reduzir usando a regra 26 (cmd)
+
+
+Estado 40
+
+   39 cmdblock: '{' • cmdl '}'
+   40         | '{' • '}'
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+    '}'            deslocar, e ir ao estado 70
+
+    cmdl       ir ao estado 71
+    cmd        ir ao estado 72
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 41
+
+   34 fundec: typedec TK_IDENTIFIER '(' params ')' cmd •
+
+    $padrão  reduzir usando a regra 34 (fundec)
+
+
+Estado 42
+
+   23 cmd: readcmd • ';'
+
+    ';'  deslocar, e ir ao estado 73
+
+
+Estado 43
+
+   22 cmd: printcmd • ';'
+
+    ';'  deslocar, e ir ao estado 74
+
+
+Estado 44
+
+   24 cmd: returncmd • ';'
+
+    ';'  deslocar, e ir ao estado 75
+
+
+Estado 45
+
+   25 cmd: cmdblock •
+
+    $padrão  reduzir usando a regra 25 (cmd)
+
+
+Estado 46
+
+   20 cmd: attrib • ';'
+
+    ';'  deslocar, e ir ao estado 76
+
+
+Estado 47
+
+   21 cmd: flowctrl •
+
+    $padrão  reduzir usando a regra 21 (cmd)
+
+
+Estado 48
+
+   35 params: param ',' params •
+
+    $padrão  reduzir usando a regra 35 (params)
+
+
+Estado 49
+
+    9 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals • ';'
+
+    ';'  deslocar, e ir ao estado 77
+
+
+Estado 50
+
+   10 seqiterals: literal • ',' seqiterals
+   11           | literal •
+
+    ','  deslocar, e ir ao estado 78
+
+    $padrão  reduzir usando a regra 11 (seqiterals)
+
+
+Estado 51
+
+   41 attrib: TK_IDENTIFIER '=' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 79
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 52
+
+   42 attrib: TK_IDENTIFIER '[' • expr ']' '=' expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 80
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 53
+
+   27 readcmd: KW_READ TK_IDENTIFIER •
+
+    $padrão  reduzir usando a regra 27 (readcmd)
+
+
+Estado 54
+
+   43 expr: TK_IDENTIFIER •
+   44     | TK_IDENTIFIER • '[' LIT_INT ']'
+   61 funcall: TK_IDENTIFIER • '(' args ')'
+
+    '['  deslocar, e ir ao estado 81
+    '('  deslocar, e ir ao estado 82
+
+    '('      [reduzir usando a regra 43 (expr)]
+    $padrão  reduzir usando a regra 43 (expr)
+
+
+Estado 55
+
+   45 expr: LIT_INT •
+
+    $padrão  reduzir usando a regra 45 (expr)
+
+
+Estado 56
+
+   46 expr: LIT_REAL •
+
+    $padrão  reduzir usando a regra 46 (expr)
+
+
+Estado 57
+
+   47 expr: LIT_CHAR •
+
+    $padrão  reduzir usando a regra 47 (expr)
+
+
+Estado 58
+
+   32 printelem: LIT_STRING •
+
+    $padrão  reduzir usando a regra 32 (printelem)
+
+
+Estado 59
+
+   55 expr: '~' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 83
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 60
+
+   56 expr: '(' • expr ')'
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 84
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 61
+
+   28 printcmd: KW_PRINT printelems •
+
+    $padrão  reduzir usando a regra 28 (printcmd)
+
+
+Estado 62
+
+   30 printelems: printelem •
+   31           | printelem • printelems
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    LIT_STRING     deslocar, e ir ao estado 58
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    $padrão  reduzir usando a regra 30 (printelems)
+
+    printelems      ir ao estado 85
+    printelem       ir ao estado 62
+    expr            ir ao estado 63
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 63
+
+   33 printelem: expr •
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 33 (printelem)
+
+
+Estado 64
+
+   52 expr: comparisonexpr •
+
+    $padrão  reduzir usando a regra 52 (expr)
+
+
+Estado 65
+
+   57 expr: funcall •
+
+    $padrão  reduzir usando a regra 57 (expr)
+
+
+Estado 66
+
+   29 returncmd: KW_RETURN expr •
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 29 (returncmd)
+
+
+Estado 67
+
+   65 flowctrl: KW_IF '(' • expr ')' cmd
+   66         | KW_IF '(' • expr ')' cmd KW_ELSE cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 95
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 68
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+   67 flowctrl: KW_WHILE expr • KW_DO cmd
+
+    KW_DO  deslocar, e ir ao estado 96
+    '<'    deslocar, e ir ao estado 86
+    '>'    deslocar, e ir ao estado 87
+    '='    deslocar, e ir ao estado 88
+    '&'    deslocar, e ir ao estado 89
+    '|'    deslocar, e ir ao estado 90
+    '+'    deslocar, e ir ao estado 91
+    '-'    deslocar, e ir ao estado 92
+    '*'    deslocar, e ir ao estado 93
+    '/'    deslocar, e ir ao estado 94
+
+
+Estado 69
+
+   68 flowctrl: KW_DO cmd • KW_WHILE expr ';'
+
+    KW_WHILE  deslocar, e ir ao estado 97
+
+
+Estado 70
+
+   40 cmdblock: '{' '}' •
+
+    $padrão  reduzir usando a regra 40 (cmdblock)
+
+
+Estado 71
+
+   39 cmdblock: '{' cmdl • '}'
+
+    '}'  deslocar, e ir ao estado 98
+
+
+Estado 72
+
+   18 cmdl: cmd • cmdl
+   19     | cmd •
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    $padrão  reduzir usando a regra 19 (cmdl)
+
+    cmdl       ir ao estado 99
+    cmd        ir ao estado 72
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 73
+
+   23 cmd: readcmd ';' •
+
+    $padrão  reduzir usando a regra 23 (cmd)
+
+
+Estado 74
+
+   22 cmd: printcmd ';' •
+
+    $padrão  reduzir usando a regra 22 (cmd)
+
+
+Estado 75
+
+   24 cmd: returncmd ';' •
+
+    $padrão  reduzir usando a regra 24 (cmd)
+
+
+Estado 76
+
+   20 cmd: attrib ';' •
+
+    $padrão  reduzir usando a regra 20 (cmd)
+
+
+Estado 77
+
+    9 vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';' •
+
+    $padrão  reduzir usando a regra 9 (vectordec)
+
+
+Estado 78
+
+   10 seqiterals: literal ',' • seqiterals
+
+    LIT_INT   deslocar, e ir ao estado 17
+    LIT_REAL  deslocar, e ir ao estado 18
+    LIT_CHAR  deslocar, e ir ao estado 19
+
+    seqiterals  ir ao estado 100
+    literal     ir ao estado 50
+
+
+Estado 79
+
+   41 attrib: TK_IDENTIFIER '=' expr •
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 41 (attrib)
+
+
+Estado 80
+
+   42 attrib: TK_IDENTIFIER '[' expr • ']' '=' expr
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+    ']'  deslocar, e ir ao estado 101
+
+
+Estado 81
+
+   44 expr: TK_IDENTIFIER '[' • LIT_INT ']'
+
+    LIT_INT  deslocar, e ir ao estado 102
+
+
+Estado 82
+
+   61 funcall: TK_IDENTIFIER '(' • args ')'
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    $padrão  reduzir usando a regra 64 (args)
+
+    expr            ir ao estado 103
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+    args            ir ao estado 104
+
+
+Estado 83
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   55     | '~' expr •
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    $padrão  reduzir usando a regra 55 (expr)
+
+
+Estado 84
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   56     | '(' expr • ')'
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+    ')'  deslocar, e ir ao estado 105
+
+
+Estado 85
+
+   31 printelems: printelem printelems •
+
+    $padrão  reduzir usando a regra 31 (printelems)
+
+
+Estado 86
+
+   58 comparisonexpr: expr '<' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 106
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 87
+
+   59 comparisonexpr: expr '>' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 107
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 88
+
+   60 comparisonexpr: expr '=' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 108
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 89
+
+   53 expr: expr '&' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 109
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 90
+
+   54 expr: expr '|' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 110
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 91
+
+   48 expr: expr '+' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 111
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 92
+
+   49 expr: expr '-' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 112
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 93
+
+   50 expr: expr '*' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 113
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 94
+
+   51 expr: expr '/' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 114
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 95
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+   65 flowctrl: KW_IF '(' expr • ')' cmd
+   66         | KW_IF '(' expr • ')' cmd KW_ELSE cmd
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+    ')'  deslocar, e ir ao estado 115
+
+
+Estado 96
+
+   67 flowctrl: KW_WHILE expr KW_DO • cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    cmd        ir ao estado 116
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 97
+
+   68 flowctrl: KW_DO cmd KW_WHILE • expr ';'
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 117
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 98
+
+   39 cmdblock: '{' cmdl '}' •
+
+    $padrão  reduzir usando a regra 39 (cmdblock)
+
+
+Estado 99
+
+   18 cmdl: cmd cmdl •
+
+    $padrão  reduzir usando a regra 18 (cmdl)
+
+
+Estado 100
+
+   10 seqiterals: literal ',' seqiterals •
+
+    $padrão  reduzir usando a regra 10 (seqiterals)
+
+
+Estado 101
+
+   42 attrib: TK_IDENTIFIER '[' expr ']' • '=' expr
+
+    '='  deslocar, e ir ao estado 118
+
+
+Estado 102
+
+   44 expr: TK_IDENTIFIER '[' LIT_INT • ']'
+
+    ']'  deslocar, e ir ao estado 119
+
+
+Estado 103
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+   62 args: expr • ',' args
+   63     | expr •
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+    ','  deslocar, e ir ao estado 120
+
+    $padrão  reduzir usando a regra 63 (args)
+
+
+Estado 104
+
+   61 funcall: TK_IDENTIFIER '(' args • ')'
+
+    ')'  deslocar, e ir ao estado 121
+
+
+Estado 105
+
+   56 expr: '(' expr ')' •
+
+    $padrão  reduzir usando a regra 56 (expr)
+
+
+Estado 106
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   58               | expr '<' expr •
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 58 (comparisonexpr)
+
+
+Estado 107
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   59               | expr '>' expr •
+   60               | expr • '=' expr
+
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 59 (comparisonexpr)
+
+
+Estado 108
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+   60               | expr '=' expr •
+
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 60 (comparisonexpr)
+
+
+Estado 109
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   53     | expr '&' expr •
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 53 (expr)
+
+
+Estado 110
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   54     | expr '|' expr •
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 54 (expr)
+
+
+Estado 111
+
+   48 expr: expr • '+' expr
+   48     | expr '+' expr •
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 48 (expr)
+
+
+Estado 112
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   49     | expr '-' expr •
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 49 (expr)
+
+
+Estado 113
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   50     | expr '*' expr •
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    $padrão  reduzir usando a regra 50 (expr)
+
+
+Estado 114
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   51     | expr '/' expr •
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    $padrão  reduzir usando a regra 51 (expr)
+
+
+Estado 115
+
+   65 flowctrl: KW_IF '(' expr ')' • cmd
+   66         | KW_IF '(' expr ')' • cmd KW_ELSE cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    cmd        ir ao estado 122
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 116
+
+   67 flowctrl: KW_WHILE expr KW_DO cmd •
+
+    $padrão  reduzir usando a regra 67 (flowctrl)
+
+
+Estado 117
+
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+   68 flowctrl: KW_DO cmd KW_WHILE expr • ';'
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+    ';'  deslocar, e ir ao estado 123
+
+
+Estado 118
+
+   42 attrib: TK_IDENTIFIER '[' expr ']' '=' • expr
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    expr            ir ao estado 124
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+
+
+Estado 119
+
+   44 expr: TK_IDENTIFIER '[' LIT_INT ']' •
+
+    $padrão  reduzir usando a regra 44 (expr)
+
+
+Estado 120
+
+   62 args: expr ',' • args
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 54
+    LIT_INT        deslocar, e ir ao estado 55
+    LIT_REAL       deslocar, e ir ao estado 56
+    LIT_CHAR       deslocar, e ir ao estado 57
+    '~'            deslocar, e ir ao estado 59
+    '('            deslocar, e ir ao estado 60
+
+    $padrão  reduzir usando a regra 64 (args)
+
+    expr            ir ao estado 103
+    comparisonexpr  ir ao estado 64
+    funcall         ir ao estado 65
+    args            ir ao estado 125
+
+
+Estado 121
+
+   61 funcall: TK_IDENTIFIER '(' args ')' •
+
+    $padrão  reduzir usando a regra 61 (funcall)
+
+
+Estado 122
+
+   65 flowctrl: KW_IF '(' expr ')' cmd •
+   66         | KW_IF '(' expr ')' cmd • KW_ELSE cmd
+
+    KW_ELSE  deslocar, e ir ao estado 126
+
+    KW_ELSE  [reduzir usando a regra 65 (flowctrl)]
+    $padrão  reduzir usando a regra 65 (flowctrl)
+
+
+Estado 123
+
+   68 flowctrl: KW_DO cmd KW_WHILE expr ';' •
+
+    $padrão  reduzir usando a regra 68 (flowctrl)
+
+
+Estado 124
+
+   42 attrib: TK_IDENTIFIER '[' expr ']' '=' expr •
+   48 expr: expr • '+' expr
+   49     | expr • '-' expr
+   50     | expr • '*' expr
+   51     | expr • '/' expr
+   53     | expr • '&' expr
+   54     | expr • '|' expr
+   58 comparisonexpr: expr • '<' expr
+   59               | expr • '>' expr
+   60               | expr • '=' expr
+
+    '<'  deslocar, e ir ao estado 86
+    '>'  deslocar, e ir ao estado 87
+    '='  deslocar, e ir ao estado 88
+    '&'  deslocar, e ir ao estado 89
+    '|'  deslocar, e ir ao estado 90
+    '+'  deslocar, e ir ao estado 91
+    '-'  deslocar, e ir ao estado 92
+    '*'  deslocar, e ir ao estado 93
+    '/'  deslocar, e ir ao estado 94
+
+    $padrão  reduzir usando a regra 42 (attrib)
+
+
+Estado 125
+
+   62 args: expr ',' args •
+
+    $padrão  reduzir usando a regra 62 (args)
+
+
+Estado 126
+
+   66 flowctrl: KW_IF '(' expr ')' cmd KW_ELSE • cmd
+
+    TK_IDENTIFIER  deslocar, e ir ao estado 32
+    KW_READ        deslocar, e ir ao estado 33
+    KW_PRINT       deslocar, e ir ao estado 34
+    KW_RETURN      deslocar, e ir ao estado 35
+    KW_IF          deslocar, e ir ao estado 36
+    KW_WHILE       deslocar, e ir ao estado 37
+    KW_DO          deslocar, e ir ao estado 38
+    ';'            deslocar, e ir ao estado 39
+    '{'            deslocar, e ir ao estado 40
+
+    cmd        ir ao estado 127
+    readcmd    ir ao estado 42
+    printcmd   ir ao estado 43
+    returncmd  ir ao estado 44
+    cmdblock   ir ao estado 45
+    attrib     ir ao estado 46
+    flowctrl   ir ao estado 47
+
+
+Estado 127
+
+   66 flowctrl: KW_IF '(' expr ')' cmd KW_ELSE cmd •
+
+    $padrão  reduzir usando a regra 66 (flowctrl)

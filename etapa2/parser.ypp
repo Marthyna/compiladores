@@ -1,0 +1,153 @@
+%{
+    #include <stdio.h>
+    #include <string>
+    #include "symbols.hpp"
+
+    using namespace std;
+    
+    int yylex();
+    void yyerror(string msg);
+    extern int lineNumber;
+
+%}
+
+%token TK_IDENTIFIER
+%token LIT_INT LIT_REAL LIT_CHAR LIT_STRING
+%token KW_INT KW_BYTE KW_REAL
+%token KW_READ KW_PRINT KW_RETURN
+%token KW_IF KW_ELSE KW_WHILE KW_DO
+%token OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+
+%left '<' '>' '='
+%left '&' '|'
+%left '+' '-'
+%left '*' '/'
+%left '~'
+
+%%
+
+program: ldecl
+    ;
+
+ldecl: dec ldecl
+    | dec
+    ;
+
+dec: vardec
+    | fundec
+    | vectordec
+    ;
+
+vardec: typedec TK_IDENTIFIER '=' literal ';'
+    ;
+
+vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' ';'
+    | typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';'
+    ;
+
+seqiterals: literal ',' seqiterals
+    | literal
+    ;
+
+typedec: KW_INT
+    | KW_BYTE
+    | KW_REAL
+    ;
+
+literal: LIT_INT
+    | LIT_CHAR
+    | LIT_REAL
+    ;
+
+cmdl: cmd cmdl
+    | cmd
+    ;
+
+cmd: attrib ';'
+    | flowctrl 
+    | printcmd ';'
+    | readcmd ';'
+    | returncmd ';'
+    | cmdblock
+    | ';'
+    ;
+
+readcmd: KW_READ TK_IDENTIFIER
+    ;
+
+printcmd: KW_PRINT printelems
+    ;
+
+returncmd: KW_RETURN expr
+    ;
+
+printelems: printelem 
+    | printelem printelems
+    ;
+
+printelem: LIT_STRING
+    | expr
+    ;
+
+fundec: typedec TK_IDENTIFIER '(' params ')' cmd
+    ;
+
+params: param ',' params
+    | param
+    |
+    ;
+
+param: typedec TK_IDENTIFIER
+    ;
+
+cmdblock: '{' cmdl '}'
+    | '{' '}'
+    ;
+
+attrib: TK_IDENTIFIER '=' expr
+    | TK_IDENTIFIER '[' expr ']' '=' expr
+    ;
+
+expr: TK_IDENTIFIER
+    | TK_IDENTIFIER '[' LIT_INT ']'
+    | LIT_INT
+    | LIT_REAL
+    | LIT_CHAR
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | comparisonexpr
+    | expr '&' expr
+    | expr '|' expr
+    | '~' expr
+    | '(' expr ')'
+    | funcall
+    ;
+
+comparisonexpr: expr '<' expr
+    | expr '>' expr
+    | expr '=' expr
+    ;
+
+
+funcall: TK_IDENTIFIER '(' args ')'
+    ;
+
+args: expr ',' args
+    | expr
+    |
+    ;
+
+flowctrl: KW_IF '(' expr ')' cmd
+    | KW_IF '(' expr ')' cmd KW_ELSE cmd
+    | KW_WHILE expr KW_DO cmd
+    | KW_DO cmd KW_WHILE expr ';'
+    ;
+
+%%
+
+void yyerror(string msg) {
+    fprintf(stderr, "Erro de sintaxe na linha %d\n", lineNumber);
+    exit(3);
+}
