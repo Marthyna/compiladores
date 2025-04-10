@@ -55,7 +55,7 @@ int main ()
     a = a + 1;
     print "A era=15\n";
     };
-    
+  
   if (x=100)
     {
     print "Nao tem como isso...\n";
@@ -70,11 +70,17 @@ int incn (int p, int n )
   return p + n;
   }
 
-int marthyna () {
+int marthyna (int i, int a) {
   print "oi" "tudo bem?";
-  if (1=2)
+  if (1<=2)
     {;}
+
+  if(1 <= 2){};
+  if(2 >= 3){};
+  if(0 != 2){};
 }
+
+int u = 1;
 
 // end of file
   

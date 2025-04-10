@@ -1,4 +1,8 @@
 %{
+    // UFRGS - Marthyna Weber - 2025-1
+    //
+    // parser.ypp - Analisador sintático
+    // Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
     #include <stdio.h>
     #include <string>
     #include "symbols.hpp"
@@ -18,7 +22,7 @@
 %token KW_IF KW_ELSE KW_WHILE KW_DO
 %token OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
 
-%left '<' '>' '='
+%left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
 %left '&' '|'
 %left '+' '-'
 %left '*' '/'
@@ -92,9 +96,14 @@ printelem: LIT_STRING
 fundec: typedec TK_IDENTIFIER '(' params ')' cmd
     ;
 
-params: param ',' params
-    | param
-    |
+params:
+    param_list
+    | 
+    ;
+
+param_list:
+      param
+    | param_list ',' param
     ;
 
 param: typedec TK_IDENTIFIER
@@ -109,7 +118,7 @@ attrib: TK_IDENTIFIER '=' expr
     ;
 
 expr: TK_IDENTIFIER
-    | TK_IDENTIFIER '[' LIT_INT ']'
+    | TK_IDENTIFIER '[' expr ']'
     | LIT_INT
     | LIT_REAL
     | LIT_CHAR
@@ -127,7 +136,10 @@ expr: TK_IDENTIFIER
 
 comparisonexpr: expr '<' expr
     | expr '>' expr
-    | expr '=' expr
+    | expr OPERATOR_LE expr
+    | expr OPERATOR_GE expr
+    | expr OPERATOR_EQ expr
+    | expr OPERATOR_DIF expr
     ;
 
 

@@ -2,7 +2,7 @@
 // UFRGS - Marthyna Weber - 2025-1
 //
 // scanner.l - analisador léxico
-// Código parcialmente desenvolvido em sala de aula pelo professor.
+// Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
 
 #include "symbols.hpp"
 #include "parser.tab.hpp"

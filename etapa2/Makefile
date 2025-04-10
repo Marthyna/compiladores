@@ -1,3 +1,8 @@
+# UFRGS - Marthyna Weber - 2025-1
+#
+# Makefile
+# Código desenvolvido em sala de aula pelo professor Marcelo Johann.
+
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall
 

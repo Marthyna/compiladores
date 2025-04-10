@@ -1,7 +1,7 @@
 // UFRGS - Marthyna Weber - 2025-1
 //
 // symbols.hpp - tabela de símbolos
-// Código parcialmente desenvolvido em sala de aula pelo professor.
+// Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
 
 #ifndef SYMBOLS_HPP
 #define SYMBOLS_HPP

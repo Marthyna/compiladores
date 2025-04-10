@@ -1,7 +1,7 @@
 // UFRGS - Marthyna Weber - 2025-1
 //
 // main.cpp - programa principal
-// Código parcialmente desenvolvido em sala de aula pelo professor.
+// Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
 
 #include <stdio.h>
 #include <stdlib.h>
