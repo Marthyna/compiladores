@@ -1,0 +1,212 @@
+%{
+    // UFRGS - Marthyna Weber - 2025-1
+    //
+    // parser.ypp - Analisador sintático
+    // Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
+    #include <stdio.h>
+    #include <string>
+    #include "symbols.hpp"
+
+    using namespace std;
+    
+    int yylex();
+    void yyerror(string msg);
+    extern int lineNumber;
+
+%}
+
+%token <symbol> TK_IDENTIFIER
+%token <symbol> LIT_INT
+%token <symbol> LIT_REAL
+%token <symbol> LIT_CHAR
+%token <symbol> LIT_STRING
+%token <ast> KW_INT KW_BYTE KW_REAL
+%token <ast> KW_READ KW_PRINT KW_RETURN
+%token <ast> KW_IF KW_ELSE KW_WHILE KW_DO
+%token <ast> OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+
+%left '<' '>' OPERATOR_DIF OPERATOR_EQ OPERATOR_GE OPERATOR_LE
+%left '&' '|'
+%left '+' '-'
+%left '*' '/'
+%left '~'
+
+%type <ast>expr comparisonexpr funcall
+
+%union {
+    SYMBOL* symbol;
+    AST* ast;
+}
+%%
+
+program: ldecl
+    ;
+
+ldecl: dec ldecl
+    | dec
+    ;
+
+dec: vardec
+    | fundec
+    | vectordec
+    ;
+
+vardec: typedec TK_IDENTIFIER '=' literal ';'
+    ;
+
+vectordec: typedec TK_IDENTIFIER '[' LIT_INT ']' ';'
+    | typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';'
+    ;
+
+seqiterals: literal ',' seqiterals
+    | literal
+    ;
+
+typedec: KW_INT
+    | KW_BYTE
+    | KW_REAL
+    ;
+
+literal: LIT_INT
+    | LIT_CHAR
+    | LIT_REAL
+    ;
+
+cmdl: cmd cmdl
+    | cmd
+    ;
+
+cmd: attrib ';'
+    | flowctrl 
+    | printcmd ';'
+    | readcmd ';'
+    | returncmd ';'
+    | cmdblock
+    | ';'
+    ;
+
+readcmd: KW_READ TK_IDENTIFIER
+    ;
+
+printcmd: KW_PRINT printelems
+    ;
+
+returncmd: KW_RETURN expr
+    ;
+
+printelems: printelem 
+    | printelem printelems
+    ;
+
+printelem: LIT_STRING
+    | expr
+    ;
+
+fundec: typedec TK_IDENTIFIER '(' params ')' cmd
+    ;
+
+params:
+    param_list
+    | 
+    ;
+
+param_list:
+      param
+    | param_list ',' param
+    ;
+
+param: typedec TK_IDENTIFIER
+    ;
+
+cmdblock: '{' cmdl '}'
+    | '{' '}'
+    ;
+
+attrib: TK_IDENTIFIER '=' expr
+    | TK_IDENTIFIER '[' expr ']' '=' expr
+    ;
+
+expr: TK_IDENTIFIER              { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1); 
+                                    fprintf(stderr, "variavel %s\n", $1->text.c_str()); 
+                                 }
+    | TK_IDENTIFIER '[' expr ']' { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1); 
+                                    fprintf(stderr, "variavel %s do tipo %s\n", $1->text.c_str(), $3->text.c_str()); 
+                                 }
+    | LIT_INT                    { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1); 
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | LIT_REAL                   { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1); 
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | LIT_CHAR                   { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1); 
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | expr '+' expr              { 
+                                    $$ = new AST(AST_SYMBOL, {}, $1+$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | expr '-' expr              { 
+                                    $$ = new AST(AST_SUB, {}, $1-$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | expr '*' expr              { 
+                                    $$ = new AST(AST_MUL, {}, $1*$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | expr '/' expr              { 
+                                    $$ = new AST(AST_DIV, {}, $1/$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | comparisonexpr             {}
+    | expr '&' expr              { 
+                                    $$ = new AST(AST_AND, {}, $1&$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | expr '|' expr              { 
+                                    $$ = new AST(AST_OR, {}, $1|$3); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | '~' expr                   { 
+                                    $$ = new AST(AST_NOT, {}, !$2); 
+                                    fprintf(stderr, "=%d\n", $$); 
+                                 }
+    | '(' expr ')'               {
+                                    
+                                 }
+    | funcall                    { }
+    ;
+
+comparisonexpr: expr '<' expr
+    | expr '>' expr
+    | expr OPERATOR_LE expr
+    | expr OPERATOR_GE expr
+    | expr OPERATOR_EQ expr
+    | expr OPERATOR_DIF expr
+    ;
+
+
+funcall: TK_IDENTIFIER '(' args ')'
+    ;
+
+args: expr ',' args
+    | expr
+    |
+    ;
+
+flowctrl: KW_IF '(' expr ')' cmd            { astPrint($3); }
+    | KW_IF '(' expr ')' cmd KW_ELSE cmd    { astPrint($3); }
+    | KW_WHILE expr KW_DO cmd               { astPrint($3); }
+    | KW_DO cmd KW_WHILE expr ';'           { astPrint($2); }
+    ;
+
+%%
+
+void yyerror(string msg) {
+    fprintf(stderr, "Erro de sintaxe na linha %d\n", lineNumber);
+    exit(3);
+}

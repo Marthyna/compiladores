@@ -4,9 +4,9 @@
 // scanner.l - analisador léxico
 // Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
 
+#include "ast.hpp"
 #include "symbols.hpp"
 #include "parser.tab.hpp"
-#include "ast.hpp"
 
 #define MAX_STRING_SIZE 1024
 
@@ -41,7 +41,7 @@ extern int lineNumber;
 "!="                    { return OPERATOR_DIF; }
 
 [0-9]+                  { 
-                            symbolInsert(SYMBOL_LIT_INT, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_INT, yytext); 
                             return LIT_INT;
                         }
 [0-9]+"/"[0-9]+         { 
@@ -56,7 +56,7 @@ extern int lineNumber;
                         }
 
 '([^'\\]|\\[nt"\\'])'   { 
-                            symbolInsert(SYMBOL_LIT_CHAR, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_CHAR, yytext); 
                             return LIT_CHAR;
                         }
 '[^']+'                 { 
@@ -113,7 +113,7 @@ extern int lineNumber;
                         }
 <STRING_LITERAL>\"      {
                             strBuffer[strIndex] = '\0';  
-                            symbolInsert(SYMBOL_LIT_STRING, strBuffer);
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_STRING, strBuffer);
                             BEGIN(INITIAL); 
                             return LIT_STRING; 
                         }

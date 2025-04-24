@@ -6,7 +6,6 @@
 
 #include "symbols.hpp"
 #include "parser.tab.hpp"
-#include "ast.hpp"
 
 #define MAX_STRING_SIZE 1024
 
@@ -45,7 +44,7 @@ extern int lineNumber;
                             return LIT_INT;
                         }
 [0-9]+"/"[0-9]+         { 
-                            yylval.symbol = symbolInsert(SYMBOL_LIT_REAL, yytext); 
+                            symbolInsert(SYMBOL_LIT_REAL, yytext); 
                             return LIT_REAL;
                         }
 
@@ -66,7 +65,7 @@ extern int lineNumber;
                         }
 
 [A-Za-z][A-Za-z0-9_]*   { 
-                            yylval.symbol = symbolInsert(SYMBOL_IDENTIFIER, yytext); 
+                            symbolInsert(SYMBOL_IDENTIFIER, yytext); 
                             return TK_IDENTIFIER;
                         }
 
