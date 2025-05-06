@@ -4,6 +4,7 @@
 // scanner.l - analisador léxico
 // Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
 
+#include "ast.hpp"
 #include "symbols.hpp"
 #include "parser.tab.hpp"
 
@@ -40,11 +41,11 @@ extern int lineNumber;
 "!="                    { return OPERATOR_DIF; }
 
 [0-9]+                  { 
-                            symbolInsert(SYMBOL_LIT_INT, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_INT, yytext); 
                             return LIT_INT;
                         }
 [0-9]+"/"[0-9]+         { 
-                            symbolInsert(SYMBOL_LIT_REAL, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_REAL, yytext); 
                             return LIT_REAL;
                         }
 
@@ -55,7 +56,7 @@ extern int lineNumber;
                         }
 
 '([^'\\]|\\[nt"\\'])'   { 
-                            symbolInsert(SYMBOL_LIT_CHAR, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_CHAR, yytext); 
                             return LIT_CHAR;
                         }
 '[^']+'                 { 
@@ -65,7 +66,7 @@ extern int lineNumber;
                         }
 
 [A-Za-z][A-Za-z0-9_]*   { 
-                            symbolInsert(SYMBOL_IDENTIFIER, yytext); 
+                            yylval.symbol = symbolInsert(SYMBOL_IDENTIFIER, yytext); 
                             return TK_IDENTIFIER;
                         }
 
@@ -112,7 +113,7 @@ extern int lineNumber;
                         }
 <STRING_LITERAL>\"      {
                             strBuffer[strIndex] = '\0';  
-                            symbolInsert(SYMBOL_LIT_STRING, strBuffer);
+                            yylval.symbol = symbolInsert(SYMBOL_LIT_STRING, strBuffer);
                             BEGIN(INITIAL); 
                             return LIT_STRING; 
                         }

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
 
 extern FILE *yyin;
 extern int running;
@@ -15,6 +16,7 @@ void symbolPrintTable();
 void initMe();
 void processTokens(FILE *file);
 int getLineNumber();
+extern std::ostream *out;
 
 int main(int argc, char **argv)
 {
@@ -28,9 +30,17 @@ int main(int argc, char **argv)
     yyin = fopen(argv[1], "r");
     if (!yyin)
     {
-        fprintf(stderr, "Erro ao abrir arquivo\n");
+        fprintf(stderr, "Erro ao abrir arquivo de entrada\n");
         return 1;
     }
+
+    std::ofstream output(argv[2]);
+    if (!output.is_open())
+    {
+        fprintf(stderr, "Erro ao abrir arquivo de saída\n");
+        return 1;
+    }
+    out = &output;
 
     yyparse();
 

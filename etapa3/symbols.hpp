@@ -11,16 +11,31 @@
 
 using namespace std;
 
-#define SYMBOL_LIT_INT 1
-#define SYMBOL_LIT_CHAR 2
-#define SYMBOL_LIT_REAL 3
-#define SYMBOL_LIT_STRING 4
-#define SYMBOL_IDENTIFIER 5
+enum SymbolTypes
+{
+    SYMBOL_LIT_INT,
+    SYMBOL_LIT_CHAR,
+    SYMBOL_LIT_REAL,
+    SYMBOL_LIT_STRING,
+    SYMBOL_IDENTIFIER,
+    SYMBOL_VARDEC,
+    SYMBOL_FUNDEC,
+};
+
+enum SymbolDataTypes
+{
+    SYMBOL_DATA_TYPE_INT,
+    SYMBOL_DATA_TYPE_CHAR,
+    SYMBOL_DATA_TYPE_REAL,
+    SYMBOL_DATA_TYPE_STRING,
+    SYMBOL_DATA_TYPE_INVALID
+};
 
 struct SYMBOL
 {
     int type;
     std::string text;
+    int dataType;
 
 public:
     SYMBOL(int type, string text) : type(type), text(text) {};

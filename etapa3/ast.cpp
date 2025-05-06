@@ -12,11 +12,14 @@ string ASTTypeNames[] = {
     "AST_AND",
     "AST_OR",
     "AST_NOT",
-    "AST_ASS",
+    "AST_ASG",
     "AST_CMDL",
     "AST_VARDEC",
     "AST_FUNDEC",
+    "AST_VECTORDEC",
+    "AST_VECTORDEC_INIT",
     "AST_LIT",
+    "AST_LIST",
     "AST_DECL",
     "AST_TYPEINT",
     "AST_TYPEBYTE",
@@ -25,16 +28,25 @@ string ASTTypeNames[] = {
     "AST_IF_ELSE",
     "AST_WHILE",
     "AST_DOWHILE",
-    "AST_READ",
-    "AST_PRINT",
     "AST_RETURN",
-    "AST_BLOCK",
+    "AST_PRINT",
+    "AST_READ",
     "AST_PARAM",
+    "AST_FUNCCALL",
+    "AST_BLOCK",
+    "AST_LT",
+    "AST_GT",
+    "AST_LE",
+    "AST_GE",
+    "AST_EQ",
+    "AST_NE",
     "AST_FUNCALL",
-    "AST_LIST"};
+    "AST_VECTORACCESS",
+    "AST_ASG_VECTOR",
+    "AST_EMPTY"};
 
 // METHODS
-void astPrint(AST *node, int depth = 0)
+void astPrint(AST *node, int depth)
 {
     if (!node)
         return;
@@ -44,7 +56,7 @@ void astPrint(AST *node, int depth = 0)
         fprintf(stderr, "  ");
     }
 
-    if (node->type < sizeof(ASTTypeNames) / sizeof(string))
+    if (node->type < static_cast<int>(sizeof(ASTTypeNames) / sizeof(string)))
         fprintf(stderr, "AST: %s", ASTTypeNames[node->type].c_str());
     else
         fprintf(stderr, "AST: UNKNOWN_TYPE");
@@ -58,4 +70,9 @@ void astPrint(AST *node, int depth = 0)
     {
         astPrint(child, depth + 1);
     }
+}
+
+void AST::add(AST *child)
+{
+    this->children.push_back(child);
 }

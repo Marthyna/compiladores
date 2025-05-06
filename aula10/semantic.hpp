@@ -3,7 +3,7 @@
 #include "ast.hpp"
 
 void check_and_set_declarations(AST *node);
-void check_undeclared(AST *node);
+void check_undeclared();
 // checks
 
 // END OF FILE

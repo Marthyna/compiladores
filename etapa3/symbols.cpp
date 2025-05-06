@@ -9,13 +9,29 @@
 #include <map>
 
 extern int yylex();
+extern YYSTYPE yylval;
 
 int lineNumber = 1;
 int running = 1;
 
 using namespace std;
 
-map<string, SYMBOL *> SymbolTable;
+string SymbolTypeName[] = {
+    "SYMBOL_LIT_INT",
+    "SYMBOL_LIT_CHAR",
+    "SYMBOL_LIT_REAL",
+    "SYMBOL_LIT_STRING",
+    "SYMBOL_IDENTIFIER"};
+
+string SymbolDataTypeName[] = {
+    "SYMBOL_DATA_TYPE_INT",
+    "SYMBOL_DATA_TYPE_CHAR",
+    "SYMBOL_DATA_TYPE_REAL",
+    "SYMBOL_DATA_TYPE_STRING",
+    "SYMBOL_DATA_TYPE_INVALID"};
+
+map<string, SYMBOL *>
+    SymbolTable;
 
 const map<int, string> tokenNames = {
     {KW_BYTE, "KW_BYTE"},

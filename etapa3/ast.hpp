@@ -9,6 +9,7 @@
 #include "symbols.hpp"
 
 using namespace std;
+struct SYMBOL;
 
 enum ASTTypes
 {
@@ -18,10 +19,16 @@ enum ASTTypes
     AST_SUB,
     AST_MUL,
     AST_DIV,
+    AST_LT, // Comparação
+    AST_GT,
+    AST_LE,
+    AST_GE,
+    AST_EQ,
+    AST_NE,
     AST_AND,
     AST_OR,
     AST_NOT,
-    AST_ASS,
+    AST_ASG,
     AST_CMDL,
     AST_VARDEC,
     AST_FUNDEC,
@@ -42,7 +49,11 @@ enum ASTTypes
     AST_READ,
     AST_PARAM,
     AST_FUNCCALL,
-    AST_BLOCK
+    AST_BLOCK,
+    AST_FUNCALL,
+    AST_VECTORACCESS,
+    AST_ASG_VECTOR,
+    AST_EMPTY
 };
 
 struct AST
@@ -53,9 +64,9 @@ struct AST
 
 public:
     AST(int t, vector<AST *> c, SYMBOL *s = 0) : type(t), children(c), symbol(s) {};
-    void AST::add(AST *child);
+    void add(AST *child);
 };
 
-void astPrint(AST *node, int depth = 0);
+void astPrint(AST *node, int depth);
 
 #endif // AST_HPP
