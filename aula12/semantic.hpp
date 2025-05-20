@@ -3,7 +3,6 @@
 #include "ast.hpp"
 
 void check_and_set_declarations(AST *node);
-void NewFunction(int returnType, AST *node);
 void check_undeclared();
 // checks
 

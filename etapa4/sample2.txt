@@ -1,0 +1,178 @@
+int redeclared_var = 10;
+// byte redeclared_var = 5; // ERROR: 'redeclared_var' redeclared
+
+int another_var = 0;
+// int another_var = 1; // ERROR: 'another_var' redeclared
+
+byte type_check_byte = 'a';
+int type_check_int = 100;
+real type_check_real = 1/5;
+
+// int x = undeclared_var_rhs; // ERROR: 'undeclared_var_rhs' not declared
+// int undec()
+// {
+    // undeclared_var = 5; // ERROR: 'undeclared_var' not declared
+// }
+
+int scalar_s = 1;
+int scalar_s2 = 0;
+int vector_v[5];
+int func_f_def() { return 0; }
+
+int test()
+{
+    scalar_s2 = scalar_s; // OK
+    scalar_s = 5 + scalar_s2; // OK
+
+    // scalar_s[0] = 1; // ERROR: 'scalar_s' used as vector (LHS)
+    // scalar_s2 = scalar_s[0]; // ERROR: 'scalar_s' used as vector (RHS)
+    // scalar_s2 = scalar_s(); // ERROR: 'scalar_s' used as function
+
+    vector_v[0] = scalar_s; // OK
+    scalar_s2 = vector_v[1]; // OK
+
+    // vector_v = 1; // ERROR: 'vector_v' used as scalar (LHS) - (Note: depends on if array assignment is allowed at all)
+    // scalar_s2 = vector_v; // ERROR: 'vector_v' used as scalar (RHS)
+
+    // scalar_s = vector_v(); // ERROR: 'vector_v' used as function
+
+    scalar_s2 = func_f_def(); // OK
+    if (func_f_def() > 0) { scalar_s = 1; } // OK
+
+    // scalar_s2 = func_f_def; // ERROR: 'func_f_def' used as scalar
+    // func_f_def = 1; // ERROR: 'func_f_def' used as scalar (LHS)
+
+    // func_f_def[0] = 1; // ERROR: 'func_f_def' used as vector (LHS)
+    // scalar_s2 = func_f_def[0]; // ERROR: 'func_f_def' used as vector (RHS)
+}
+
+
+int expr_int1 = 10;
+int expr_int2 = 20;
+byte expr_byte1 = 'b';
+real expr_real1 = 2/5;
+int result_i = 0;
+real result_r = 1/2;
+byte result_b = 0;
+
+int test2()
+{
+    result_i = expr_int1 + expr_int2; // OK (int + int -> int)
+    result_i = expr_int1 + expr_byte1; // OK (int + byte -> int)
+    // result_r = expr_int1 + expr_real1; // not OK (int + real)
+    // result_r = expr_byte1 + expr_real1; // not OK (byte + real)
+    result_i = expr_byte1 + expr_byte1; // OK (byte + byte -> int, assuming promotion)
+
+    // result_r = expr_int1; // not OK (real = int)
+    // result_r = expr_byte1; // not OK (real = byte)
+    result_i = expr_byte1; // OK (int = byte)
+    result_b = expr_byte1; // OK (byte = byte)
+
+    // result_i = expr_real1; // ERROR: int = real
+    // result_b = expr_real1; // ERROR: byte = real
+
+    // result_i = expr_int1 + "hello"; // ERROR: int + string
+}
+
+
+int func_args(int p_int, byte p_byte, real p_real) {
+  print p_int p_byte p_real;
+  return p_int + p_byte;
+}
+
+int call_res = 0;
+int vec_init1[3] = 1, 'c', 3; // OK
+int vec_init4[5]; // OK (no initialization)
+// int vec_init2[2] = 1, 2, 3; // ERROR: too many initializers for vec_init2
+// int vec_init3[3] = 1, 2/5, 3; // ERROR: type mismatch in initializer for vec_init3 (real for int)
+// int vec_init5[0]; // ERROR or WARNING: zero-size vector, depending on language spec
+int test3()
+{
+    call_res = func_args(10, 'x', 3/14); // OK
+    // call_res = func_args(10, 'x'); // ERROR: too few arguments
+    // call_res = func_args(10, 'x', 3/14, 100); // ERROR: too many arguments
+
+    // call_res = func_args(10, 2/5, 3/14); // ERROR: byte expected, real given for p_byte
+
+    call_res = func_args(expr_byte1, expr_int1, expr_real1); // OK: (int=byte, byte=char, real=real)
+    // call_res = func_args(expr_byte1, 'y', expr_int1); // not OK: (int=byte, byte=char, real!=int)
+}
+
+int func_ret_int() { return 100; } // OK
+byte func_ret_byte() { return 'z'; } // OK
+real func_ret_real() { return 10/5; } // OK
+
+int ret_val_i = 0;
+byte ret_val_b = 0;
+real ret_val_r = 1/8;
+
+int test4(){
+    ret_val_i = func_ret_int(); // OK
+    ret_val_b = func_ret_byte(); // OK
+    ret_val_r = func_ret_real(); // OK
+}
+
+int func_ret_err1() { return 10/5; } // ERROR: returning real from int function
+byte func_ret_err2() { return 300; } // ERROR: returning int (potentially too large) from byte function
+real func_ret_err3() { return 0; } // ERROR: returning string from real function
+
+int func_no_ret() { print "no return"; } // ERROR: int function must return int
+byte func_wrong_ret_type() { return 1/10; } // ERROR: returning real from byte function
+
+int idx_vec[10];
+int idx_int = 1;
+byte idx_byte = 'a';
+real idx_real = 2/5;
+
+int test5()
+{
+    idx_vec[0] = 100; // OK (literal int)
+    idx_vec[idx_int] = 200; // OK (int variable)
+    idx_vec[idx_byte] = 300; // OK (byte variable, promotes to int)
+    idx_vec[5+2] = 400; // OK (int expression)
+
+    // idx_vec[idx_real] = 500; // ERROR: real index
+    idx_vec[idx_int > 0] = 600; // ERROR: boolean index (if boolean is not directly int)
+
+    idx_int = idx_vec[0]; // OK
+    // idx_int = idx_vec[idx_real]; // ERROR: real index
+}
+
+int global_var = 100;
+int result = 0;
+int factorial(int n) {
+  if (n < 2) {
+    result = 1;
+  } else {
+    result = n * factorial(n-1);
+  }
+  return result;
+}
+
+int num = 5;
+int fact_res = 0;
+byte char_val = 'A';
+real float_val = 3/80;
+int main() {
+  print "Global var: " global_var "\n";
+  global_var = global_var + char_val; // OK (int + byte)
+  print "Factorial de " num " eh: ";
+  fact_res = factorial(num); // OK
+  print fact_res "\n";
+
+  // fact_res = factorial(float_val); // ERROR: int param expected, real given
+
+  if (fact_res > global_var) {
+    print "Factorial maior que global\n";
+  }
+
+  read num; // Assumindo que 'read' espera um identificador de tipo numérico
+  print "Voce digitou: " num "\n";
+
+  read float_val; // OK if read supports real
+
+  return 0;
+}
+
+int another_global_var = 0; // OK
+// byte global_var = 10; // ERROR: 'global_var' redeclared

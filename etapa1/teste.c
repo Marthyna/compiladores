@@ -14,11 +14,5 @@ de
 multiplas 
 linhas
 --/
-if (x >= 5) 
-    print("OK");
-if (x != 10)
-    print("not OK");
-if (x <= 15)
-    print("OK");
-if (x == 10)
-    print("OK");
+x = 5/3/8
+x = 5/3
