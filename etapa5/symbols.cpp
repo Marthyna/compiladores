@@ -13,6 +13,8 @@ extern YYSTYPE yylval;
 
 int lineNumber = 1;
 int running = 1;
+int tempCount = 0;
+int labelCount = 0;
 
 using namespace std;
 
@@ -141,4 +143,26 @@ void processTokens(FILE *file)
     }
 }
 
+SYMBOL *makeTemp(void)
+{
+    static char buffer[16] = "";
+    snprintf(buffer, 32, "temp%d", tempCount++);
+    return symbolInsert(SYMBOL_IDENTIFIER, buffer);
+}
+
+SYMBOL *makeLabel(void)
+{
+    static char buffer[32] = "";
+    snprintf(buffer, sizeof(buffer), "label%d", labelCount++);
+    return symbolInsert(SYMBOL_IDENTIFIER, buffer);
+}
+
+SYMBOL *makeIntSymbol(int value)
+{
+    static int intSymCount = 0;
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "__intconst_%d_%d", value, intSymCount++);
+    SYMBOL *sym = new SYMBOL(LIT_INT, std::to_string(value));
+    return sym;
+}
 // END OF FILE

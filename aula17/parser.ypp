@@ -11,6 +11,7 @@
     #include "ast.hpp"
     #include "symbols.hpp"
     #include "semantic.hpp"
+    #include "tac.hpp"
 
     using namespace std;
     
@@ -62,6 +63,7 @@ program: ldecl {
                     }
                     
                     astToSourceCode(root, *out, 0);
+                    tacPrintBackwards(generateCode($1));
                     out->close();
                 }
 };

@@ -141,4 +141,12 @@ void processTokens(FILE *file)
     }
 }
 
+SYMBOL *makeTemp(void)
+{
+    static int serialNumber = 0;
+    static char buffer[16] = "";
+    snprintf(buffer, 32, "temp%d", serialNumber++);
+    return symbolInsert(SYMBOL_IDENTIFIER, buffer);
+}
+
 // END OF FILE

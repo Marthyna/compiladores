@@ -57,5 +57,8 @@ int getLineNumber(void);
 int isRunning(void);
 void initMe(void);
 void processTokens(FILE *file);
+SYMBOL *makeTemp(void);
+SYMBOL *makeLabel(void);
+SYMBOL *makeIntSymbol(int value);
 
 #endif // SYMBOLS_HPP
