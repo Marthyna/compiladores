@@ -1,0 +1,13 @@
+int number = 0;
+int c = 0;
+int v[01] = 'a',0,'b',0,0,0,0,0,0,0;
+
+int main ()
+  {
+  number = 0;
+  c = 7 - 1;
+  c = 5;
+  v[7] = 55;
+  print "->" v[5] 7 c "\n";
+  number = 2;
+  }

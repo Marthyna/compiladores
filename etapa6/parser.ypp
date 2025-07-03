@@ -1,0 +1,269 @@
+%{
+    // UFRGS - Marthyna Weber - 2025-1
+    //
+    // parser.ypp - Analisador sintático
+    // Código parcialmente desenvolvido em sala de aula pelo professor Marcelo Johann.
+    
+    #include <stdio.h>
+    #include <string>
+    #include <iostream>
+    #include <fstream>
+    #include "ast.hpp"
+    #include "symbols.hpp"
+    #include "semantic.hpp"
+    #include "tac.hpp"
+    #include "asm.hpp"
+
+    using namespace std;
+    
+    int yylex();
+    void yyerror(string msg);
+    extern int lineNumber;
+    AST *root = nullptr;
+    std::ofstream *out;
+%}
+
+%token <symbol> TK_IDENTIFIER
+%token <symbol> LIT_INT
+%token <symbol> LIT_REAL
+%token <symbol> LIT_CHAR
+%token <symbol> LIT_STRING
+%token <ast> KW_INT KW_BYTE KW_REAL
+%token <ast> KW_READ KW_PRINT KW_RETURN
+%token <ast> KW_IF KW_ELSE KW_WHILE KW_DO
+%token <ast> OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+
+%left '|'
+%left '&'
+%nonassoc '<' '>' OPERATOR_LE OPERATOR_GE OPERATOR_EQ OPERATOR_DIF
+%left '+' '-'
+%left '*' '/'
+%left '~'
+
+%type <ast> expr funcall cmdl fundec vardec literal ldecl cmd attrib dec vectordec seqiterals typedec readcmd printcmd returncmd printelems printelem params param_list param cmdblock args flowctrl
+%union {
+    SYMBOL* symbol;
+    AST* ast;
+}
+
+%%
+
+program: ldecl { 
+                root = $1;     
+                if (root)
+                {
+                    printf("\n--- Código reconstruído ---\n\n");
+                    checkAndSetDeclarations(root);
+                    checkUsage(root);
+                    checkTypes(root);
+                    
+                    if (semantic_errors > 0)
+                    {
+                        fprintf(stderr, "Semantic errors were found.");
+                        exit(4);
+                    }
+                    
+                    astToSourceCode(root, *out, 0);
+                    TAC *tacCode = generateCode($1);
+                    tacPrintBackwards(tacCode);
+                    
+                    // Gerar assembly
+                    std::ofstream asmFile("output.s");
+                    if (asmFile.is_open()) {
+                        generateAsm(tacCode, asmFile);
+                        asmFile.close();
+                    }
+                    
+                    out->close();
+                }
+};
+
+ldecl: dec       { $$ = new AST(AST_DECL, {$1}, lineNumber); }
+    |  ldecl dec { $1->add($2); $$ = $1; }
+    ;
+
+dec:  vardec    { $$ = $1; }
+    | fundec    { $$ = $1; }
+    | vectordec { $$ = $1; }
+    ;
+
+vardec: typedec TK_IDENTIFIER '=' literal ';' 
+        { $$ = new AST(AST_VARDEC, {$1, $4}, lineNumber, $2); }
+    ;
+
+vectordec:
+      typedec TK_IDENTIFIER '[' LIT_INT ']' ';'
+      { $$ = new AST(AST_VECTORDEC, std::vector<AST*>({$1, new AST(AST_LIT, {}, lineNumber, $4)}), lineNumber, $2); }
+    | typedec TK_IDENTIFIER '[' LIT_INT ']' '=' seqiterals ';'
+      { $$ = new AST(AST_VECTORDEC_INIT, std::vector<AST*>({$1, new AST(AST_LIT, {}, lineNumber, $4), $7}), lineNumber, $2); }
+    ;
+
+
+seqiterals: literal                { $$ = new AST(AST_LIST, {$1}, lineNumber); }
+    |       seqiterals ',' literal { $1->add($3); $$ = $1; }
+    ;
+
+typedec: KW_INT  { $$ = new AST(AST_TYPEINT, {}, lineNumber); }
+    |    KW_BYTE { $$ = new AST(AST_TYPEBYTE, {}, lineNumber); }
+    |    KW_REAL { $$ = new AST(AST_TYPEREAL, {}, lineNumber); }
+    ;
+
+literal: LIT_INT    { $$ = new AST(AST_LIT, {}, lineNumber, $1); }
+    |    LIT_CHAR   { $$ = new AST(AST_LIT, {}, lineNumber, $1); }
+    |    LIT_REAL   { $$ = new AST(AST_LIT, {}, lineNumber, $1); }
+    |    LIT_STRING { $$ = new AST(AST_LIT, {}, lineNumber, $1); }
+    ;
+
+cmdl: cmd      { $$ = new AST(AST_CMDL, {$1}, lineNumber); }
+    | cmdl cmd { $1->add($2); $$ = $1; }
+    ;
+
+cmd:  attrib ';'    { $$ = $1; }
+    | flowctrl      { $$ = $1; }
+    | printcmd ';'  { $$ = $1; }
+    | readcmd ';'   { $$ = $1; }
+    | returncmd ';' { $$ = $1; }
+    | cmdblock      { $$ = $1; }
+    | ';'           { $$ = new AST(AST_EMPTY, {}, lineNumber); }
+    ;
+
+readcmd: KW_READ TK_IDENTIFIER { $$ = new AST(AST_READ, { new AST(AST_SYMBOL, {}, lineNumber, $2) }, lineNumber); }
+    ;
+
+printcmd: KW_PRINT printelems { $$ = new AST(AST_PRINT, {$2}, lineNumber); }
+    ;
+
+returncmd: KW_RETURN expr { $$ = new AST(AST_RETURN, {$2}, lineNumber); }
+    ;
+
+printelems: printelem            { $$ = new AST(AST_LIST, {$1}, lineNumber); }
+    |       printelems printelem { $1->add($2); $$ = $1; }
+    ;
+
+printelem: LIT_STRING   { $$ = new AST(AST_LIT, {}, lineNumber, $1); }
+    |      expr         { $$ = $1; }
+    ;
+
+fundec: typedec TK_IDENTIFIER '(' params ')' cmd 
+        { $$ = new AST(AST_FUNDEC, {$1, $4, $6}, lineNumber, $2); 
+          fprintf(stderr, "Funcao %s\n", $2->text.c_str());
+        }
+    ;
+
+params:
+    param_list { $$ = $1; }
+    |          { $$ = new AST(AST_LIST, {}, lineNumber); }
+    ;
+
+param_list:
+      param                 { $$ = new AST(AST_LIST, {$1}, lineNumber); }
+    | param_list ',' param  { $1->add($3); $$ = $1; }
+    ;
+
+param: typedec TK_IDENTIFIER { $$ = new AST(AST_PARAM, {$1}, lineNumber, $2); }
+    ;
+
+cmdblock: '{' cmdl '}' { $$ = new AST(AST_BLOCK, {$2}, lineNumber); }
+    |     '{' '}'      { $$ = new AST(AST_BLOCK, {}, lineNumber); }
+    ;
+
+attrib: TK_IDENTIFIER '=' expr               { $$ = new AST(AST_ASG, {$3}, lineNumber, $1); }
+    |   TK_IDENTIFIER '[' expr ']' '=' expr  { $$ = new AST(AST_ASG_VECTOR, {$3, $6}, lineNumber, $1); }
+    ;
+
+expr: TK_IDENTIFIER              { 
+                                    $$ = new AST(AST_SYMBOL, {}, lineNumber, $1); 
+                                    fprintf(stderr, "Variavel %s\n", $1->text.c_str()); 
+                                 }
+    | TK_IDENTIFIER '[' expr ']' { 
+                                    $$ = new AST(AST_VECTORACCESS, {$3}, lineNumber, $1);
+                                    fprintf(stderr, "Vetor %s\n", $1->text.c_str()); 
+                                 }
+    | LIT_INT                    { 
+                                    $$ = new AST(AST_LIT, {}, lineNumber, $1); 
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | LIT_REAL                   { 
+                                    $$ = new AST(AST_LIT, {}, lineNumber, $1);
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | LIT_CHAR                   { 
+                                    $$ = new AST(AST_LIT, {}, lineNumber, $1);
+                                    fprintf(stderr, "valor=%s\n", $1->text.c_str()); 
+                                 }
+    | expr '+' expr              { 
+                                    $$ = new AST(AST_ADD, {$1, $3}, lineNumber);
+                                    fprintf(stderr, "Addition operation\n");
+                                 }
+    | expr '-' expr              { 
+                                    $$ = new AST(AST_SUB, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "Subtraction operation\n");
+                                 }
+    | expr '*' expr              { 
+                                    $$ = new AST(AST_MUL, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "Multiplication operation\n");
+                                 }
+    | expr '/' expr              { 
+                                    $$ = new AST(AST_DIV, {$1, $3}, lineNumber);
+                                    fprintf(stderr, "Division operation\n");
+                                 }
+    | expr '<' expr              { 
+                                    $$ = new AST(AST_LT, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "Less than operation\n");
+                                 }
+    | expr '>' expr              { 
+                                    $$ = new AST(AST_GT, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "Greater than operation\n");
+                                 }
+    | expr OPERATOR_LE expr      { 
+                                    $$ = new AST(AST_LE, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "LE operation\n"); 
+                                 }
+    | expr OPERATOR_GE expr      { 
+                                    $$ = new AST(AST_GE, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "GE operation\n");
+                                 }
+    | expr OPERATOR_EQ expr      { 
+                                    $$ = new AST(AST_EQ, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "EQ operation\n");
+                                 }
+    | expr OPERATOR_DIF expr     { 
+                                    $$ = new AST(AST_NE, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "DIF operation\n");
+                                 }
+    | expr '&' expr              { 
+                                    $$ = new AST(AST_AND, {$1, $3}, lineNumber);
+                                    fprintf(stderr, "And operation\n");
+                                 }
+    | expr '|' expr              { 
+                                    $$ = new AST(AST_OR, {$1, $3}, lineNumber); 
+                                    fprintf(stderr, "Or operation\n");
+                                 }
+    | '~' expr                   { 
+                                    $$ = new AST(AST_NOT, {$2}, lineNumber); 
+                                    fprintf(stderr, "Not operation\n");
+                                 }
+    | '(' expr ')'               { $$ = $2; }
+    | funcall                    { $$ = $1; }
+    ;
+
+funcall: TK_IDENTIFIER '(' args ')' { $$ = new AST(AST_FUNCALL, {$3}, lineNumber, $1); }
+    ;
+
+args: expr          { $$ = new AST(AST_LIST, {$1}, lineNumber); }
+    | args ',' expr { $1->add($3); $$ = $1; }
+    |               { $$ = new AST(AST_LIST, {}, lineNumber); }
+    ;
+
+flowctrl: KW_IF '(' expr ')' cmd             { $$ = new AST(AST_IF, {$3, $5}, lineNumber); }
+    |     KW_IF '(' expr ')' cmd KW_ELSE cmd { $$ = new AST(AST_IF_ELSE, {$3, $5, $7}, lineNumber); }
+    |     KW_WHILE expr KW_DO cmd            { $$ = new AST(AST_WHILE, {$2, $4}, lineNumber); }
+    |     KW_DO cmd KW_WHILE expr ';'        { $$ = new AST(AST_DOWHILE, {$2, $4}, lineNumber); }
+    ;
+
+%%
+
+void yyerror(string msg) {
+    fprintf(stderr, "Erro de sintaxe na linha %d\n", lineNumber);
+    exit(3);
+}

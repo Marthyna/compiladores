@@ -1,0 +1,11 @@
+int x = 0;
+int main()
+{
+    x = 01;
+    while (x > 0)
+        do
+        {
+            print x "\n";
+            x = x - 1;
+        }
+}
